@@ -1,0 +1,9 @@
+INFO 20:53:38 start scanning
+INFO 20:53:40 Url is finded: "https://www.youtube.com/watch?v=WuqgLjmJTg8"
+INFO 20:53:40 program was started
+INFO 20:53:40 program was finished
+INFO 20:58:24 start scanning
+INFO 20:58:28 start scanning
+INFO 20:58:30 Url is finded: "https://www.youtube.com/watch?v=WuqgLjmJTg8"
+INFO 20:58:30 program was started
+INFO 20:58:30 program was finished

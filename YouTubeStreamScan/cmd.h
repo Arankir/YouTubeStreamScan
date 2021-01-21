@@ -5,6 +5,8 @@
 #include <QProcess>
 #include <QDebug>
 #include <QEventLoop>
+#include <chrono>
+#include <thread>
 #include <QTimer>
 
 class Cmd : public QObject {

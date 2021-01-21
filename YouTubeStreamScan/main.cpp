@@ -6,8 +6,8 @@
 #include "cmd.h"
 
 QString filePath_ = "channels.txt";
-QString programmSaveVideoPath_ = "streamlink.exe";
-QString dirVideoSave_ = "videos\\";
+QString streamLink_ = "streamlink.exe";
+QString dirVideoSave_ = "videos/";
 QString quality_ = "best";
 Cmd cmd_;
 
@@ -17,45 +17,43 @@ QStringList getChannelList();
 QString checkChannel(const QString &channel);
 bool mainLoop();
 bool createDir();
+QString getVideoFileName(QString url);
+void openStreamLink(const QString &streamUrl, const QString &fileName);
 void initLog();
 void log(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 int main(int argc, char *argv[]) {
-    QCoreApplication a(argc, argv);
-    QObject::connect(&cmd_, &Cmd::s_closeApp, &a, &QCoreApplication::quit);
+    //QCoreApplication a(argc, argv);
+    //QObject::connect(&cmd_, &Cmd::s_closeApp, &a, &QCoreApplication::quit);
 
     switch (argc) {
     default:
-    case 5:
+    case 4:
         dirVideoSave_ = argv[4];
         [[fallthrough]];
-    case 4:
+    case 3:
         quality_ = argv[3];
         [[fallthrough]];
-    case 3:
-        filePath_ = argv[2];
-        [[fallthrough]];
     case 2:
-        programmSaveVideoPath_ = argv[1];
+        filePath_ = argv[2];
         [[fallthrough]];
     case 1:
     case 0: {}
     }
 
+    initLog();
+
     qInfo() << "programm started with parameters:"
-            << "programmSaveVideoPath:" << programmSaveVideoPath_
             << "filePath:" << filePath_
             << "quality:" << quality_
             << "dirVideoSave:" << dirVideoSave_;
-
-    initLog();
 
     qInfo() << "start scanning";
     mainLoop();
     qInfo() << "scanning is end";
 
-    QTimer::singleShot(10, &cmd_, &Cmd::closeApp);
-    return a.exec();
+    //QTimer::singleShot(10, &cmd_, &Cmd::closeApp);
+    return 1;
 }
 
 bool createDir(const QString &aPath) {
@@ -83,31 +81,38 @@ bool mainLoop() {
         for (const QString &channel: list) {
             QString streamUrl = checkChannel(channel);
             if (streamUrl != "") {
-                qInfo() << "Url is finded:" << streamUrl;
-                QString youtubeIndex = streamUrl;
-                youtubeIndex = youtubeIndex.remove("https://").remove("www.").remove("youtube.com/").remove("watch?v=") ;
-                QString fileName = youtubeIndex;
-
-                createDir(dirVideoSave_);
-
-                int fileIndex = 0;
-                while(QFile::exists(dirVideoSave_ + fileName + ".mp4")) {
-                    fileName = youtubeIndex + "_" + QString::number(++fileIndex);
-                }
-
-                QProcess program;
-                program.start(programmSaveVideoPath_, QStringList() << streamUrl << quality_ << "-o" << (dirVideoSave_ + fileName + ".mp4"));
-                program.waitForStarted();
-                qInfo() << "program was started";
-                program.waitForFinished(-1);
-                program.close();
-                qInfo() << "program was finished";
-                //return true;
+                qInfo() << "url is finded:" << streamUrl;
+                openStreamLink(streamUrl, getVideoFileName(streamUrl));
             }
         }
         Cmd::wait(10000);
     }
     return true;
+}
+
+QString getVideoFileName(QString aUrl) {
+    QString fileName = aUrl.remove("https://").remove("www.").remove("youtube.com/").remove("watch?v=");
+    createDir(dirVideoSave_);
+    int fileIndex = 0;
+
+    while(QFile::exists(dirVideoSave_ + fileName + ".mp4")) {
+        fileName = aUrl + "_" + QString::number(++fileIndex);
+    }
+    qInfo() << "video path:" << dirVideoSave_ + fileName + ".mp4";
+    return dirVideoSave_ + fileName + ".mp4";
+}
+
+void openStreamLink(const QString &aStreamUrl, const QString &aFileName) {
+    QProcess program;
+    program.start(streamLink_, QStringList() << aStreamUrl << quality_ << "-o" << aFileName);
+    program.waitForStarted();
+    qInfo() << "program was started";
+    program.waitForFinished(-1);
+    qWarning() << "last error is" << program.error();
+    program.waitForFinished(-1);
+    qWarning() << "last error2 is" << program.error();
+    program.close();
+    qInfo() << "program was finished";
 }
 
 QStringList getChannelList() {
@@ -145,7 +150,9 @@ void log(QtMsgType aType, const QMessageLogContext &aContext, const QString &aMe
     out.flush();
 
     qInstallMessageHandler(0);
-    qDebug() << aMessage.toUtf8();
+    if (aType != QtWarningMsg) {
+        qDebug() << aMessage.toUtf8();
+    }
     qInstallMessageHandler(log);
 }
 

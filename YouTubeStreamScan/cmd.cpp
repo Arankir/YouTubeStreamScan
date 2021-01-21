@@ -19,7 +19,7 @@ QString Cmd::curl(const QString &aChannel) {
     process_.waitForBytesWritten();
     process_.waitForReadyRead();
 
-    wait(500);
+    wait(600);
 
     QString output = process_.readAll();
     int posStart = output.indexOf("<link rel=\"canonical\" href=\"") + 28;
@@ -47,14 +47,7 @@ QString Cmd::command(const QString &aComand) {
 }
 
 void Cmd::wait(int aMSeconds) {
-    QEventLoop *loop = new QEventLoop;
-    QTimer *timer = new QTimer;
-    timer->setInterval(aMSeconds);
-    connect(timer, &QTimer::timeout, loop, &QEventLoop::quit);
-    timer->start();
-    loop->exec();
-    delete timer;
-    delete loop;
+    std::this_thread::sleep_for(std::chrono::milliseconds(aMSeconds));
 }
 
 void Cmd::closeApp() {

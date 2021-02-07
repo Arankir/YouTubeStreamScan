@@ -16,6 +16,8 @@ public:
     ~Cmd();
     QString curl(const QString &channel);
     QString command(const QString &comand);
+    QString lastChannel() {return lastChannel_;}
+    QString secondChannel() {return secondChannel_;}
     static void wait(int mSeconds);
 
 public slots:
@@ -26,6 +28,8 @@ signals:
 
 private:
     QProcess process_;
+    QString lastChannel_;
+    QString secondChannel_;
 
 };
 

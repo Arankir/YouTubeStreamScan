@@ -16,7 +16,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         cmd.cpp \
-        main.cpp
+        main.cpp \
+        mainwork.cpp \
+        streamlink.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -24,4 +26,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    cmd.h
+    cmd.h \
+    mainwork.h \
+    streamlink.h

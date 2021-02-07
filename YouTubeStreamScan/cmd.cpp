@@ -11,6 +11,8 @@ Cmd::~Cmd() {
 }
 
 QString Cmd::curl(const QString &aChannel) {
+    secondChannel_ = lastChannel_;
+    lastChannel_ = aChannel;
     QByteArray strCommand;
     if (QSysInfo::productType() == "windows") {
         process_.write(QString("curl \"" + aChannel + "/live\" --ssl-no-revoke\n").toUtf8());

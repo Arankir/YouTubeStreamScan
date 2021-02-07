@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <Windows.h>
+#include "mainwork.h"
 #include "cmd.h"
 
 QString filePath_ = "channels.txt";
@@ -11,20 +12,22 @@ QString dirVideoSave_ = "videos/";
 QString quality_ = "best";
 Cmd cmd_;
 
+QStringList onlineChannels_;
+
 QScopedPointer<QFile> logFile_;
 
-QStringList getChannelList();
-QString checkChannel(const QString &channel);
-bool mainLoop();
-bool createDir();
+//QStringList getChannelList();
+//QString checkChannel(const QString &channel);
+//bool mainLoop();
+//bool createDir();
 QString getVideoFileName(QString url);
-void openStreamLink(const QString &streamUrl, const QString &fileName);
+void openStreamLink(const QString &streamUrl, const QString &fileName, const QString &aChannel);
 void initLog();
 void log(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 int main(int argc, char *argv[]) {
-    //QCoreApplication a(argc, argv);
-    //QObject::connect(&cmd_, &Cmd::s_closeApp, &a, &QCoreApplication::quit);
+    QCoreApplication a(argc, argv);
+    QObject::connect(&cmd_, &Cmd::s_closeApp, &a, &QCoreApplication::quit);
 
     switch (argc) {
     default:
@@ -48,90 +51,100 @@ int main(int argc, char *argv[]) {
             << "quality:" << quality_
             << "dirVideoSave:" << dirVideoSave_;
 
-    qInfo() << "start scanning";
-    mainLoop();
-    qInfo() << "scanning is end";
+    //qInfo() << "start scanning";
+    MainWork work(filePath_, streamLink_, dirVideoSave_, quality_);
+    //mainLoop();
+    //qInfo() << "scanning is end";
 
-    //QTimer::singleShot(10, &cmd_, &Cmd::closeApp);
+    QTimer::singleShot(10, &cmd_, &Cmd::closeApp);
     return 1;
 }
 
-bool createDir(const QString &aPath) {
-    bool exist = true;
-    QString path = aPath;
-    path.replace("\\", "/");
-    QStringList dirs = path.split("/");
-    if (dirs.last() != "") {
-        dirs.removeLast();
-    }
-    QString pathNow = "";
-    for (auto &dir: dirs) {
-        pathNow += std::move(dir) + "/";
-        exist = (QDir().mkdir(pathNow) && exist);
-    }
-    return exist;
-}
+//bool createDir(const QString &aPath) {
+//    bool exist = true;
+//    QString path = aPath;
+//    path.replace("\\", "/");
+//    QStringList dirs = path.split("/");
+//    if (dirs.last() != "") {
+//        dirs.removeLast();
+//    }
+//    QString pathNow = "";
+//    for (auto &dir: dirs) {
+//        pathNow += std::move(dir) + "/";
+//        exist = (QDir().mkdir(pathNow) && exist);
+//    }
+//    return exist;
+//}
 
-bool mainLoop() {
-    while (true) {
-        QStringList list = getChannelList();
-        if (list.count() == 0) {
-            return false;
-        }
-        for (const QString &channel: list) {
-            QString streamUrl = checkChannel(channel);
-            if (streamUrl != "") {
-                qInfo() << "url is finded:" << streamUrl;
-                openStreamLink(streamUrl, getVideoFileName(streamUrl));
-            }
-        }
-        Cmd::wait(10000);
-    }
-    return true;
-}
+//bool mainLoop() {
+//    while (true) {
+//        QStringList list = getChannelList();
+//        if (list.count() == 0) {
+//            return false;
+//        }
+//        for (const QString &channel: list) {
+//            QString streamUrl = checkChannel(channel);
+//            if (streamUrl != "") {
+//                qInfo() << "url is finded:" << streamUrl;
+//                onlineChannels_.append(cmd_.lastChannel());
+//                openStreamLink(streamUrl, getVideoFileName(streamUrl), cmd_.lastChannel());
+//            }
+//        }
+//        Cmd::wait(10000);
+//    }
+//    return true;
+//}
 
-QString getVideoFileName(QString aUrl) {
-    QString fileName = aUrl.remove("https://").remove("www.").remove("youtube.com/").remove("watch?v=");
-    createDir(dirVideoSave_);
-    int fileIndex = 0;
+//QString getVideoFileName(QString aUrl) {
+//    QString fileName = aUrl.remove("https://").remove("www.").remove("youtube.com/").remove("watch?v=");
+//    createDir(dirVideoSave_);
+//    int fileIndex = 0;
 
-    while(QFile::exists(dirVideoSave_ + fileName + ".mp4")) {
-        fileName = aUrl + "_" + QString::number(++fileIndex);
-    }
-    qInfo() << "video path:" << dirVideoSave_ + fileName + ".mp4";
-    return dirVideoSave_ + fileName + ".mp4";
-}
+//    while(QFile::exists(dirVideoSave_ + fileName + ".mp4")) {
+//        fileName = aUrl + "_" + QString::number(++fileIndex);
+//    }
+//    qInfo() << "video path:" << dirVideoSave_ + fileName + ".mp4";
+//    return dirVideoSave_ + fileName + ".mp4";
+//}
 
-void openStreamLink(const QString &aStreamUrl, const QString &aFileName) {
-    QProcess program;
-    program.start(streamLink_, QStringList() << aStreamUrl << quality_ << "-o" << aFileName);
-    program.waitForStarted();
-    qInfo() << "program was started";
-    program.waitForFinished(-1);
-    qWarning() << "last error is" << program.error();
-    program.waitForFinished(-1);
-    qWarning() << "last error2 is" << program.error();
-    program.close();
-    qInfo() << "program was finished";
-}
+//void openStreamLink(const QString &aStreamUrl, const QString &aFileName, const QString &aChannel) {
+//    QProcess *program = new QProcess;
+//    program->start(streamLink_, QStringList() << aStreamUrl << quality_ << aFileName << "--subprocess-errorlog" << "--subprocess-errorlog-path ./logs" << "-o" );
+//    program->waitForStarted();
+//    qInfo() << "streamLink was started with channel " + aChannel;
+//    QObject::connect(program, &QProcess::finished, [=](int lCode, QProcess::ExitStatus lState) {
+//        if (lState != QProcess::ExitStatus::NormalExit) {
+//            qWarning() << "last error is" << program->error();
+//        }
+//        qInfo() << "program was finished with channel " + aChannel + " (" + QString::number(lCode) + ")";
+//        onlineChannels_.removeOne(aChannel);
+//        program->deleteLater();
+//    });
+////    program.waitForFinished(-1);
+////    qWarning() << "last error is" << program.error();
+////    program.waitForFinished(-1);
+////    qWarning() << "last error2 is" << program.error();
+////    program.close();
+////    qInfo() << "program was finished with channel " + aChannel;
+//}
 
-QStringList getChannelList() {
-    QFile file(filePath_);
-    if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "file with channels is not available";
-        return QStringList();
-    }
-    QStringList list;
-    while (!file.atEnd()) {
-        list << file.readLine();
-    }
-    file.close();
-    return list;
-}
+//QStringList getChannelList() {
+//    QFile file(filePath_);
+//    if (!file.open(QIODevice::ReadOnly)) {
+//        qWarning() << "file with channels is not available";
+//        return QStringList();
+//    }
+//    QStringList list;
+//    while (!file.atEnd()) {
+//        list << file.readLine();
+//    }
+//    file.close();
+//    return list;
+//}
 
-QString checkChannel(const QString &aChannel) {
-    return cmd_.curl(aChannel);
-}
+//QString checkChannel(const QString &aChannel) {
+//    return cmd_.curl(aChannel);
+//}
 
 void log(QtMsgType aType, const QMessageLogContext &aContext, const QString &aMessage) {
     const char *function = aContext.function ? aContext.function : "";
@@ -158,7 +171,7 @@ void log(QtMsgType aType, const QMessageLogContext &aContext, const QString &aMe
 
 void initLog() {
     QString logsPath = "logs\\";
-    createDir(logsPath);
+    MainWork::createDir(logsPath);
 
     //Удаление старых файлов
     QDir dirLogs(logsPath);

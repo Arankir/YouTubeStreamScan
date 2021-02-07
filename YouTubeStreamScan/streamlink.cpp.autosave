@@ -22,11 +22,12 @@ QString StreamLink::getVideoFileName(QString aUrl, const QString &aDirVideoSave)
     return aDirVideoSave + fileName + ".mp4";
 }
 
-void StreamLink::streamIsEnd(int lCode, QProcess::ExitStatus lState) {
-    if (lState != QProcess::ExitStatus::NormalExit) {
-        qWarning() << "last error is" << program_->error();
-    }
-    qInfo() << "program was finished with channel " + channel_ + " (" + QString::number(lCode) + ")";
+void StreamLink::streamIsEnd(int aCode, QProcess::ExitStatus aState) {
+//    if (lState != QProcess::ExitStatus::NormalExit) {
+//        qWarning() << "last error is" << program_->error();
+//    }
+    qWarning() << "last error is" << program_->error();
+    qInfo() << "program was finished with channel " + channel_ + " (code:" + QString::number(aCode) + ")";
 
     emit s_streamWasEnd(channel_);
     //onlineChannels_.removeOne(aChannel);

@@ -18,15 +18,20 @@ bool MainWork::mainLoop() {
             return false;
         }
         for (const QString &channel: list) {
-            QString streamUrl = checkChannel(channel);
-            if (streamUrl != "") {
-                qInfo() << "url is finded:" << streamUrl;
-                onlineChannels_.append(cmd_.secondChannel());
-                StreamLink *stream = new StreamLink(streamLink_, cmd_.secondChannel(), streamUrl, dirVideoSave_, quality_);
-                connect(stream, &StreamLink::s_streamWasEnd, this, [=](QString channel) {
-                    onlineChannels_.removeOne(channel);
-                });
-                //openStreamLink(streamUrl, getVideoFileName(streamUrl), cmd_.lastChannel());
+            bool isOnline = std::any_of(onlineChannels_.begin(), onlineChannels_.end(), [=](QString onlineChannel) {
+                return onlineChannel == channel;
+            });
+            if (!isOnline) {
+                QString streamUrl = checkChannel(channel);
+                if (streamUrl != "") {
+                    qInfo() << "url is finded:" << streamUrl;
+                    onlineChannels_.append(cmd_.lastChannel());
+                    StreamLink *stream = new StreamLink(streamLink_, cmd_.lastChannel(), streamUrl, dirVideoSave_, quality_);
+                    connect(stream, &StreamLink::s_streamWasEnd, this, [=](QString channel) {
+                        onlineChannels_.removeOne(channel);
+                    });
+                    //openStreamLink(streamUrl, getVideoFileName(streamUrl), cmd_.lastChannel());
+                }
             }
         }
         Cmd::wait(10000);

@@ -1,0 +1,30 @@
+INFO 12:21:33 programm started with parameters: filePath: "channels.txt" quality: "best" dirVideoSave: "videos/"
+INFO 12:21:33 start scanning
+WRNG 12:21:33 QObject::startTimer: Timers can only be used with threads started with QThread
+INFO 12:21:46 url is finded: "https://www.youtube.com/watch?v=WuqgLjmJTg8"
+INFO 12:21:46 video path: "videos/WuqgLjmJTg8.mp4"
+INFO 12:21:46 program was started
+WRNG 12:21:46 last error is QProcess::FailedToStart
+WRNG 12:21:46 last error2 is QProcess::FailedToStart
+INFO 12:21:46 program was finished
+INFO 12:27:28 programm started with parameters: filePath: "channels.txt" quality: "best" dirVideoSave: "videos/"
+INFO 12:27:28 start scanning
+WRNG 12:27:28 QObject::startTimer: Timers can only be used with threads started with QThread
+INFO 12:27:41 url is finded: "https://www.youtube.com/watch?v=rOp5JvoMCgY"
+INFO 12:27:41 video path: "videos/rOp5JvoMCgY.mp4"
+INFO 12:27:41 program was started
+WRNG 12:27:41 last error is QProcess::FailedToStart
+WRNG 12:27:41 last error2 is QProcess::FailedToStart
+INFO 12:27:41 program was finished
+INFO 12:27:54 url is finded: "https://www.youtube.com/watch?v=rOp5JvoMCgY"
+INFO 12:27:54 video path: "videos/rOp5JvoMCgY.mp4"
+INFO 12:27:54 program was started
+WRNG 12:27:54 last error is QProcess::FailedToStart
+WRNG 12:27:54 last error2 is QProcess::FailedToStart
+INFO 12:27:54 program was finished
+INFO 12:28:06 url is finded: "https://www.youtube.com/watch?v=rOp5JvoMCgY"
+INFO 12:28:06 video path: "videos/rOp5JvoMCgY.mp4"
+INFO 12:28:06 program was started
+WRNG 12:28:06 last error is QProcess::FailedToStart
+WRNG 12:28:06 last error2 is QProcess::FailedToStart
+INFO 12:28:06 program was finished

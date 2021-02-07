@@ -17,6 +17,11 @@ signals:
 
 private slots:
     QString getVideoFileName(QString aUrl, const QString &aDirVideoSave);
+    void streamIsEnd(int lCode, QProcess::ExitStatus lState);
+
+private:
+    QProcess *program_;
+    QString channel_;
 };
 
 #endif // STREAMLINK_H

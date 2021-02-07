@@ -6,7 +6,7 @@ Cmd::Cmd(QObject *parent) : QObject(parent) {
 }
 
 Cmd::~Cmd() {
-    process_.waitForFinished();
+    //process_.waitForFinished();
     process_.close();
 }
 
@@ -49,7 +49,14 @@ QString Cmd::command(const QString &aComand) {
 }
 
 void Cmd::wait(int aMSeconds) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(aMSeconds));
+    QEventLoop *loop = new QEventLoop;
+    QTimer *timer = new QTimer;
+    timer->setInterval(aMSeconds);
+    connect(timer, &QTimer::timeout, loop, &QEventLoop::quit);
+    timer->start();
+    loop->exec();
+    delete timer;
+    delete loop;
 }
 
 void Cmd::closeApp() {

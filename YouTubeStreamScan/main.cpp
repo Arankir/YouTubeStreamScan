@@ -20,14 +20,14 @@ QScopedPointer<QFile> logFile_;
 //QString checkChannel(const QString &channel);
 //bool mainLoop();
 //bool createDir();
-QString getVideoFileName(QString url);
-void openStreamLink(const QString &streamUrl, const QString &fileName, const QString &aChannel);
+//QString getVideoFileName(QString url);
+//void openStreamLink(const QString &streamUrl, const QString &fileName, const QString &aChannel);
 void initLog();
 void log(QtMsgType type, const QMessageLogContext &context, const QString &msg);
 
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
-    QObject::connect(&cmd_, &Cmd::s_closeApp, &a, &QCoreApplication::quit);
+    //QObject::connect(&cmd_, &Cmd::s_closeApp, &a, &QCoreApplication::quit);
 
     switch (argc) {
     default:
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     //mainLoop();
     //qInfo() << "scanning is end";
 
-    QTimer::singleShot(10, &cmd_, &Cmd::closeApp);
+    //QTimer::singleShot(10, &cmd_, &Cmd::closeApp);
     return 1;
 }
 
